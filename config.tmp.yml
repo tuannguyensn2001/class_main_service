@@ -1,0 +1,2 @@
+database:
+  url: mysqluser:secret@tcp(tcp-mo1.mogenius.io:10137)/mysqldb?charset=utf8mb4&parseTime=True&loc=Local
