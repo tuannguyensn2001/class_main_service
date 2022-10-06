@@ -6,6 +6,7 @@ import (
 	"class_main_service/src/routes"
 	"context"
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/cobra"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -21,6 +22,12 @@ const (
 	environment = "development"
 	id          = 1
 )
+
+func prometheusHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		promhttp.Handler().ServeHTTP(c.Writer, c.Request)
+	}
+}
 
 func server() *cobra.Command {
 	return &cobra.Command{
@@ -49,6 +56,8 @@ func server() *cobra.Command {
 
 			r := gin.Default()
 			r.Use(middlewares.Cors, middlewares.Recover)
+
+			r.GET("/metrics", prometheusHandler())
 
 			routes.Bootstrap(r, cfg)
 
