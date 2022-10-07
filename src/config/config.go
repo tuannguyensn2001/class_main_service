@@ -6,16 +6,21 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"os"
+	"strings"
 )
 
 type structure struct {
 	Database struct {
 		Url string `mapstructure:"url"`
 	} `mapstructure:"database"`
+	App struct {
+		Port string `mapstructure:"port"`
+	} `mapstructure:"app"`
 }
 
 type Config struct {
-	Db *gorm.DB
+	Db   *gorm.DB
+	Port string
 }
 
 func GetConfig() (Config, error) {
@@ -30,9 +35,20 @@ func GetConfig() (Config, error) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")
 	viper.AutomaticEnv()
+	viper.SetEnvPrefix(viper.GetString("ENV"))
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	err = viper.ReadInConfig()
-	if err != nil {
-		return result, err
+
+	bind := map[string]string{
+		"database.url": "DATABASE_URL",
+		"app.port":     "PORT",
+	}
+
+	for key, val := range bind {
+		err = viper.BindEnv(key, val)
+		if err != nil {
+			return result, err
+		}
 	}
 
 	config := structure{}
@@ -49,6 +65,7 @@ func GetConfig() (Config, error) {
 	}
 
 	result.Db = db
+	result.Port = config.App.Port
 
 	return result, nil
 }

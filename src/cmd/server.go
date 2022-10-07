@@ -5,6 +5,7 @@ import (
 	"class_main_service/src/middlewares"
 	"class_main_service/src/routes"
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/cobra"
@@ -61,7 +62,7 @@ func server() *cobra.Command {
 
 			routes.Bootstrap(r, cfg)
 
-			r.Run(":7000")
+			r.Run(fmt.Sprintf(":%s", cfg.Port))
 		},
 	}
 }
