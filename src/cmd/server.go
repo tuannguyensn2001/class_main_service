@@ -39,7 +39,7 @@ func server() *cobra.Command {
 				zap.S().Fatalln(err)
 			}
 
-			tp, err := tracerProvider("http://localhost:14268/api/traces")
+			tp, err := tracerProvider(cfg.Jaeger)
 			if err != nil {
 				zap.S().Error(err)
 			}

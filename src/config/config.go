@@ -16,11 +16,13 @@ type structure struct {
 	App struct {
 		Port string `mapstructure:"port"`
 	} `mapstructure:"app"`
+	Jaeger string `mapstructure:"jaeger"`
 }
 
 type Config struct {
-	Db   *gorm.DB
-	Port string
+	Db     *gorm.DB
+	Port   string
+	Jaeger string
 }
 
 func GetConfig() (Config, error) {
@@ -42,6 +44,7 @@ func GetConfig() (Config, error) {
 	bind := map[string]string{
 		"database.url": "DATABASE_URL",
 		"app.port":     "PORT",
+		"jaeger":       "JAEGER",
 	}
 
 	for key, val := range bind {
@@ -66,6 +69,7 @@ func GetConfig() (Config, error) {
 
 	result.Db = db
 	result.Port = config.App.Port
+	result.Jaeger = config.Jaeger
 
 	return result, nil
 }
