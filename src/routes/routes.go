@@ -14,8 +14,9 @@ func Bootstrap(r *gin.Engine, cfg config.Config) {
 	internalService := internal_service.New()
 
 	authRepository := auth_repository.New(cfg.Db)
-	authUsecase := auth_usecase.New(authRepository, internalService)
+	authUsecase := auth_usecase.New(authRepository, internalService, cfg.SecretKey)
 	authTransport := auth_transport.New(authUsecase)
 
 	r.POST("/api/v1/auth/register", authTransport.Register)
+	r.POST("/api/v1/auth/login", authTransport.Login)
 }

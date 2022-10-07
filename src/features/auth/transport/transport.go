@@ -11,6 +11,7 @@ import (
 
 type IUsecase interface {
 	Register(ctx context.Context, input auth_struct.RegisterInput) error
+	Login(ctx context.Context, input auth_struct.LoginInput) (*auth_struct.LoginOutput, error)
 }
 
 type transport struct {
@@ -38,4 +39,20 @@ func (t *transport) Register(ctx *gin.Context) {
 		"data": "success",
 	})
 
+}
+
+func (t *transport) Login(ctx *gin.Context) {
+	var input auth_struct.LoginInput
+	if err := ctx.ShouldBind(&input); err != nil {
+		zap.S().Error(err)
+		panic(app.BadRequestHttpError("data not valid", err))
+	}
+
+	result, err := t.usecase.Login(ctx.Request.Context(), input)
+	if err != nil {
+		panic(err)
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"data": result,
+	})
 }

@@ -14,15 +14,17 @@ type structure struct {
 		Url string `mapstructure:"url"`
 	} `mapstructure:"database"`
 	App struct {
-		Port string `mapstructure:"port"`
+		Port      string `mapstructure:"port"`
+		SecretKey string `mapstructure:"secretKey"`
 	} `mapstructure:"app"`
 	Jaeger string `mapstructure:"jaeger"`
 }
 
 type Config struct {
-	Db     *gorm.DB
-	Port   string
-	Jaeger string
+	Db        *gorm.DB
+	Port      string
+	Jaeger    string
+	SecretKey string
 }
 
 func GetConfig() (Config, error) {
@@ -42,9 +44,10 @@ func GetConfig() (Config, error) {
 	err = viper.ReadInConfig()
 
 	bind := map[string]string{
-		"database.url": "DATABASE_URL",
-		"app.port":     "PORT",
-		"jaeger":       "JAEGER",
+		"database.url":  "DATABASE_URL",
+		"app.port":      "PORT",
+		"jaeger":        "JAEGER",
+		"app.secretKey": "SECRET_KEY",
 	}
 
 	for key, val := range bind {
@@ -70,6 +73,7 @@ func GetConfig() (Config, error) {
 	result.Db = db
 	result.Port = config.App.Port
 	result.Jaeger = config.Jaeger
+	result.SecretKey = config.App.SecretKey
 
 	return result, nil
 }
