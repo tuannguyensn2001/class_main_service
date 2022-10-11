@@ -5,6 +5,7 @@ import (
 	auth_struct "class_main_service/src/features/auth/struct"
 	"context"
 	"errors"
+	"github.com/go-redis/redis/v9"
 	"github.com/golang-jwt/jwt/v4"
 	"go.uber.org/zap"
 	"time"
@@ -32,7 +33,9 @@ func (u *usecase) Login(ctx context.Context, input auth_struct.LoginInput) (*aut
 	}
 
 	version, err := u.repository.GetVersionUser(ctx, user.Id)
-	if err != nil {
+	if err != nil && errors.Is(err, redis.Nil) {
+		zap.S().Error("nil")
+	} else {
 		zap.S().Error(err)
 		return nil, err
 	}

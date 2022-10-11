@@ -15,6 +15,7 @@ type IRepository interface {
 	Create(ctx context.Context, user *auth_model.User) error
 	FindByEmail(ctx context.Context, email string) (*auth_model.User, error)
 	GetVersionUser(ctx context.Context, userId int) (int, error)
+	InitVersionUser(ctx context.Context, userId int) error
 }
 
 type IInternalService interface {

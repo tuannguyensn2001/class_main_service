@@ -90,6 +90,7 @@ func GetConfig() (Config, error) {
 	result.Port = config.App.Port
 	result.Jaeger = config.Jaeger
 	result.SecretKey = config.App.SecretKey
+	result.Rd = rd
 
 	return result, nil
 }
