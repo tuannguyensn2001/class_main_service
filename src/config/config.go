@@ -1,7 +1,10 @@
 package config
 
 import (
+	"context"
+	"github.com/go-redis/redis/v9"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -18,6 +21,9 @@ type structure struct {
 		SecretKey string `mapstructure:"secretKey"`
 	} `mapstructure:"app"`
 	Jaeger string `mapstructure:"jaeger"`
+	Redis  struct {
+		Url string `mapstructure:"url"`
+	} `mapstructure:"redis"`
 }
 
 type Config struct {
@@ -25,6 +31,7 @@ type Config struct {
 	Port      string
 	Jaeger    string
 	SecretKey string
+	Rd        *redis.Client
 }
 
 func GetConfig() (Config, error) {
@@ -68,6 +75,15 @@ func GetConfig() (Config, error) {
 	})
 	if err != nil {
 		return result, err
+	}
+
+	rd := redis.NewClient(&redis.Options{
+		Addr: config.Redis.Url,
+	})
+
+	ping := rd.Ping(context.Background())
+	if ping.Err() != nil {
+		zap.S().Error(err)
 	}
 
 	result.Db = db

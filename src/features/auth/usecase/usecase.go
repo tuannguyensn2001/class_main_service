@@ -14,6 +14,7 @@ var tracer = otel.Tracer("auth_usecase")
 type IRepository interface {
 	Create(ctx context.Context, user *auth_model.User) error
 	FindByEmail(ctx context.Context, email string) (*auth_model.User, error)
+	GetVersionUser(ctx context.Context, userId int) (int, error)
 }
 
 type IInternalService interface {

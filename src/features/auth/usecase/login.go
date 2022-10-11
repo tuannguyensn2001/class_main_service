@@ -31,8 +31,15 @@ func (u *usecase) Login(ctx context.Context, input auth_struct.LoginInput) (*aut
 		return nil, err
 	}
 
+	version, err := u.repository.GetVersionUser(ctx, user.Id)
+	if err != nil {
+		zap.S().Error(err)
+		return nil, err
+	}
+
 	claims := userClaims{
 		user.Id,
+		version,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(60 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
